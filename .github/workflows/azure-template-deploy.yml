@@ -1,16 +1,15 @@
 name: .NET Core
 
-on:
-  push:
-    branches:
-      - "master"
-  workflow-dispatch:
-
 env:
   AZURE_WEBAPP_NAME: my-app    # set this to your application's name
   AZURE_WEBAPP_PACKAGE_PATH: '.'      # set this to the path to your web app project, defaults to the repository root
   DOTNET_VERSION: '6.0'           # set this to the dot net version to use
 
+on:
+  push:
+    branches:
+      - "master"
+  workflow-dispatch:
 
 permissions:
   contents: read
