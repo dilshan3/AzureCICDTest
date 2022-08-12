@@ -48,6 +48,11 @@ jobs:
       url: 'https://testapp111p.azurewebsites.net'    
     
     steps:
+      # Signing in to Azure
+      - name: 'Signing in to Azure'
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
       # Deploy to Azure Web apps
       - name: 'Run Azure webapp deploy action using publish profile credentials'
         uses: azure/webapps-deploy@v2
