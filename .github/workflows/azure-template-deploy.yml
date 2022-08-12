@@ -1,7 +1,7 @@
 name: .NET Core
 
 env:
-  AZURE_WEBAPP_NAME: my-app    # set this to your application's name
+  AZURE_WEBAPP_NAME: testapp111p    # set this to your application's name
   AZURE_WEBAPP_PACKAGE_PATH: '.'      # set this to the path to your web app project, defaults to the repository root
   DOTNET_VERSION: '6.0'           # set this to the dot net version to use
 
@@ -36,7 +36,7 @@ jobs:
         run: |
           dotnet restore
           dotnet build --configuration Release
-          dotnet publish -c Release -o '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/myapp' 
+          dotnet publish -c Release -o '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/{{ env.AZURE_WEBAPP_NAME }}' 
 
   deploy:
     permissions:
@@ -58,7 +58,7 @@ jobs:
         uses: azure/webapps-deploy@v2
         with: 
           app-name: ${{ env.AZURE_WEBAPP_NAME }} # Replace with your app name
-          package: '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/myapp'
+          package: '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/{{ env.AZURE_WEBAPP_NAME }}'
       
       - name: logout
         run: |
