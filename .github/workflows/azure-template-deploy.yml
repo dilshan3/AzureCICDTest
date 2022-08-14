@@ -11,7 +11,7 @@ on:
       - master
 
 jobs:
-  build:
+  build and deploy:
     runs-on:  windows-latest
     steps:
       # Checkout the repo
@@ -28,17 +28,8 @@ jobs:
         run: |
           dotnet restore
           dotnet build --no-restore -c Release
-          dotnet publish -c Release --no-build -o ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/myapp 
+          dotnet publish -c Release --no-build -o ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
 
-  deploy:
-    needs: build
-    runs-on: windows-latest
-
-    environment:
-      name: 'Development'
-      url: 'https://myapp1212.azurewebsites.net'    
-    
-    steps:
       # Signing in to Azure
       - name: 'signing in to Azure'
         uses: azure/login@v1
@@ -54,4 +45,30 @@ jobs:
       
       - name: logout
         run: |
-          az logout
+          az logout  
+
+  # deploy:
+  #   needs: build
+  #   runs-on: windows-latest
+
+  #   environment:
+  #     name: 'Development'
+  #     url: 'https://myapp1212.azurewebsites.net'    
+    
+  #   steps:
+  #     # Signing in to Azure
+  #     - name: 'signing in to Azure'
+  #       uses: azure/login@v1
+  #       with:
+  #         creds: ${{ secrets.AZURE_CREDENTIALS }}
+          
+  #     # Deploy to Azure Web apps
+  #     - name: 'run Azure webapp deploy action using service principal'
+  #       uses: azure/webapps-deploy@v2
+  #       with: 
+  #         app-name: ${{ env.AZURE_WEBAPP_NAME }} # Replace with your app name
+  #         package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+      
+  #     - name: logout
+  #       run: |
+  #         az logout
