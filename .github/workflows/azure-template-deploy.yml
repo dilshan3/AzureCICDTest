@@ -1,17 +1,20 @@
 name: Deploy .NET Application
 
 env:
-  AZURE_WEBAPP_NAME: myapp1212    # set this to your application's name
+  AZURE_WEBAPP_NAME: testapp1232    # set this to your application's name
   AZURE_WEBAPP_PACKAGE_PATH: '.'      # set this to the path to your web app project, defaults to the repository root
   DOTNET_VERSION: '6.0'           # set this to the dot net version to use
 
 on:
-  push:
+  pull_request:
     branches:
       - master
+    types: 
+      - closed
 
 jobs:
   build:
+    if: github.event.pull_request.merged == true
     name: build
     runs-on:  windows-latest
     steps:
@@ -43,7 +46,7 @@ jobs:
 
     environment:
       name: 'Development'
-      url: 'https://myapp1212.azurewebsites.net'    
+      url: 'https://testapp1232.azurewebsites.net'    
   
     steps:
       - name: Download a Build Artifact
