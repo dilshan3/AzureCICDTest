@@ -2,6 +2,7 @@ name: Deploy .NET Application
 
 env:
   AZURE_WEBAPP_NAME: testapp1232    # set this to your application's name
+  AZURE_PRODUCTION_WEBAPP_NAME: testapp1232prod
   AZURE_WEBAPP_PACKAGE_PATH: '.'      # set this to the path to your web app project, defaults to the repository root
   DOTNET_VERSION: '6.0'           # set this to the dot net version to use
 
@@ -45,7 +46,7 @@ jobs:
     runs-on: windows-latest
 
     environment:
-      name: 'Development'
+      name: 'development'
       url: 'https://testapp1232.azurewebsites.net'    
   
     steps:
@@ -66,6 +67,37 @@ jobs:
         uses: azure/webapps-deploy@v2
         with: 
           app-name: ${{ env.AZURE_WEBAPP_NAME }} # Replace with your app name
+          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+      
+      - name: Logout
+        run: |
+          az logout
+
+  deploy-to-production:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: 
+      name: production
+      url: https://testapp1232prod.azurewebsites.net
+      
+    steps:
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v2.0.8
+        with:
+          name: webapp
+          path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+
+      # Signing in to Azure
+      - name: Signing in to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_PRODUCTION_CREDENTIALS }}
+          
+      # Deploy to Azure Web apps
+      - name: Run Azure webapp deploy action using service principal
+        uses: azure/webapps-deploy@v2
+        with: 
+          app-name: ${{ env.AZURE_PRODUCTION_WEBAPP_NAME }}
           package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
       
       - name: Logout
